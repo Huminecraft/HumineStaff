@@ -1,0 +1,14 @@
+name: HumineStaff
+main: humine.com.main.StaffMain
+author: MizakiGaming
+version: 1.0a
+api-version: 1.13
+commands:
+  invsee:
+    
+  endsee:
+    
+  annonce:
+    
+  vanish:
+    
