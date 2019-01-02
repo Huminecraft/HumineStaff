@@ -13,6 +13,10 @@ import humine.com.commands.AnnonceCommand;
 import humine.com.commands.OpenEnderChestCommand;
 import humine.com.commands.OpenInventoryCommand;
 import humine.com.commands.VanishCommand;
+import humine.com.commands.voteban.OpenVoteBanCommand;
+import humine.com.commands.voteban.VoteBanCommand;
+import humine.com.events.BreakDiamondBlockEvent;
+import humine.com.events.FilterBlockInEnderChestEvent;
 import humine.com.events.MessageJoinEvent;
 import humine.com.events.MessageQuitEvent;
 import humine.com.events.SaveEnderChestEvent;
@@ -23,11 +27,15 @@ public class StaffMain extends JavaPlugin{
 	private static StaffMain instance;
 	
 	private ArrayList<Player> vanished;
+	private AutoMessage autoMessage;
+	private VoteBan voteBan;
 	
 	@Override
 	public void onEnable() {
 		instance = this;
 		this.vanished = new ArrayList<Player>();
+		this.autoMessage = new AutoMessage();
+		this.voteBan = new VoteBan();
 		
 		this.saveDefaultConfig();
 		FileManager.makeDeFaultConfiguration(this.getDataFolder());
@@ -36,9 +44,19 @@ public class StaffMain extends JavaPlugin{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		this.autoMessage.getOnFile(this.getDataFolder());
 		
 		initiliazeEvents();
 		initializeCommands();
+	}
+	
+	@Override
+	public void onDisable() {
+		try {
+			this.autoMessage.save(this.getDataFolder());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void initiliazeEvents() {
@@ -46,6 +64,8 @@ public class StaffMain extends JavaPlugin{
 		this.getServer().getPluginManager().registerEvents(new SavePlayerInventoryEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new MessageJoinEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new MessageQuitEvent(), this);
+		this.getServer().getPluginManager().registerEvents(new BreakDiamondBlockEvent(), this);
+		this.getServer().getPluginManager().registerEvents(new FilterBlockInEnderChestEvent(), this);
 	}
 	
 	private void initializeCommands() {
@@ -53,6 +73,8 @@ public class StaffMain extends JavaPlugin{
 		this.getCommand("endsee").setExecutor(new OpenEnderChestCommand());
 		this.getCommand("annonce").setExecutor(new AnnonceCommand());
 		this.getCommand("vanish").setExecutor(new VanishCommand());
+		this.getCommand("voteban").setExecutor(new OpenVoteBanCommand());
+		this.getCommand("voteban").setExecutor(new VoteBanCommand());
 	}
 	
 	
@@ -70,5 +92,17 @@ public class StaffMain extends JavaPlugin{
 
 	public ArrayList<Player> getVanished() {
 		return vanished;
+	}
+
+	public AutoMessage getAutoMessage() {
+		return autoMessage;
+	}
+
+	public VoteBan getVoteBan() {
+		return voteBan;
+	}
+
+	public void setVoteBan(VoteBan voteBan) {
+		this.voteBan = voteBan;
 	}
 }
