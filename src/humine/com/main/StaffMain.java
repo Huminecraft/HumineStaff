@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import humine.com.commands.AnnonceCommand;
+import humine.com.commands.AutoMessageCommand;
 import humine.com.commands.OpenEnderChestCommand;
 import humine.com.commands.OpenInventoryCommand;
 import humine.com.commands.VanishCommand;
@@ -45,6 +46,7 @@ public class StaffMain extends JavaPlugin{
 			e.printStackTrace();
 		}
 		this.autoMessage.getOnFile(this.getDataFolder());
+		this.autoMessage.startLoop();
 		
 		initiliazeEvents();
 		initializeCommands();
@@ -75,6 +77,7 @@ public class StaffMain extends JavaPlugin{
 		this.getCommand("vanish").setExecutor(new VanishCommand());
 		this.getCommand("voteban").setExecutor(new OpenVoteBanCommand());
 		this.getCommand("voteban").setExecutor(new VoteBanCommand());
+		this.getCommand("automessage").setExecutor(new AutoMessageCommand());
 	}
 	
 	

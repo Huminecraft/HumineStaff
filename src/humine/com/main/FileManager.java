@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
 public abstract class FileManager {
@@ -32,9 +33,8 @@ public abstract class FileManager {
 			playerFile.createNewFile();
 		
 		FileConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
-		config.set("Size", player.getInventory().getSize());
 		for(short i = 0; i < player.getInventory().getSize(); i++) {
-			if(player.getInventory().getItem(i) != null || player.getInventory().getItem(i).getType() != Material.AIR) {
+			if(player.getInventory().getItem(i) != null && player.getInventory().getItem(i).getType() != Material.AIR) {
 				config.set("Inventory."+i, player.getInventory().getItem(i));
 			}
 		}
@@ -48,9 +48,8 @@ public abstract class FileManager {
 			playerFile.createNewFile();
 		
 		FileConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
-		config.set("Size", inventory.getSize());
 		for(short i = 0; i < inventory.getSize(); i++) {
-			if(inventory.getItem(i) != null || inventory.getItem(i).getType() != Material.AIR) {
+			if(inventory.getItem(i) != null && inventory.getItem(i).getType() != Material.AIR) {
 				config.set("Inventory."+i, inventory.getItem(i));
 			}
 		}
@@ -62,7 +61,7 @@ public abstract class FileManager {
 		File playerFile = new File(folder, "/Inventory/"+name+".yml");
 		if(playerFile.exists()) {
 			FileConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
-			Inventory inv = Bukkit.createInventory(null, config.getInt("Size"), "Inventaire de " + name);
+			Inventory inv = Bukkit.createInventory(null, InventoryType.PLAYER, "Inventaire de " + name);
 			for(String key : config.getConfigurationSection("Inventory").getKeys(false)) {
 				int slot = Integer.parseInt(key);
 				inv.setItem(slot, config.getItemStack("Inventory."+key));
@@ -81,9 +80,8 @@ public abstract class FileManager {
 			playerFile.createNewFile();
 		
 		FileConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
-		config.set("Size", player.getEnderChest().getSize());
 		for(short i = 0; i < player.getEnderChest().getSize(); i++) {
-			if(player.getEnderChest().getItem(i) != null || player.getEnderChest().getItem(i).getType() != Material.AIR) {
+			if(player.getEnderChest().getItem(i) != null && player.getEnderChest().getItem(i).getType() != Material.AIR) {
 				config.set("Inventory."+i, player.getEnderChest().getItem(i));
 			}
 		}
@@ -97,9 +95,8 @@ public abstract class FileManager {
 			playerFile.createNewFile();
 		
 		FileConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
-		config.set("Size", inventory.getSize());
 		for(short i = 0; i < inventory.getSize(); i++) {
-			if(inventory.getItem(i) != null || inventory.getItem(i).getType() != Material.AIR) {
+			if(inventory.getItem(i) != null && inventory.getItem(i).getType() != Material.AIR) {
 				config.set("Inventory."+i, inventory.getItem(i));
 			}
 		}
@@ -111,7 +108,7 @@ public abstract class FileManager {
 		File playerFile = new File(folder, "/Inventory/"+name+".yml");
 		if(playerFile.exists()) {
 			FileConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
-			Inventory inv = Bukkit.createInventory(null, config.getInt("Size"), "EnderChest de " + name);
+			Inventory inv = Bukkit.createInventory(null, InventoryType.PLAYER, "EnderChest de " + name);
 			for(String key : config.getConfigurationSection("Inventory").getKeys(false)) {
 				int slot = Integer.parseInt(key);
 				inv.setItem(slot, config.getItemStack("Inventory."+key));

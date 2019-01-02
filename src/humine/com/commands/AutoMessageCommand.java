@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 
 import humine.com.main.StaffMain;
 
-public class AddAutoMessageCommand implements CommandExecutor{
+public class AutoMessageCommand implements CommandExecutor{
 
 	/*
 	 *	/automessage add <message>

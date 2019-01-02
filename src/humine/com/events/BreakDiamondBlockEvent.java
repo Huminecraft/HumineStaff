@@ -11,7 +11,7 @@ public class BreakDiamondBlockEvent implements Listener{
 
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
-		if(event.getBlock().getType() == Material.DIAMOND_BLOCK) {
+		if(event.getBlock().getType() == Material.DIAMOND_ORE) {
 			for(Player player : Bukkit.getOnlinePlayers())
 			{
 				if(player.hasPermission("humine.admin.diamondblock") || player.isOp()) {
