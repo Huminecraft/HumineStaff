@@ -18,8 +18,11 @@ public class AutoMessage {
 	private int delay;
 	private boolean loop;
 	
+	private Timer timer;
+	
 	public AutoMessage() {
 		this.messages = new ArrayList<String>();
+		this.messages.add("TEST DEBUG MESSAGE AUTO !");
 		this.delay = 15;
 		this.loop = true;
 	}
@@ -42,7 +45,7 @@ public class AutoMessage {
 	}
 	
 	private void loopMessage(int number) {
-		Timer timer = new Timer(StaffMain.getInstance(), this.delay, new TimerFinishListener() {
+		this.timer = new Timer(StaffMain.getInstance(), this.delay, new TimerFinishListener() {
 			
 			@Override
 			public void execute() {
@@ -58,7 +61,7 @@ public class AutoMessage {
 			}
 		});
 		
-		timer.start();
+		this.timer.start();
 	}
 
 	public ArrayList<String> getMessages() {

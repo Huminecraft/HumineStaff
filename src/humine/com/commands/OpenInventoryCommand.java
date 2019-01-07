@@ -18,7 +18,6 @@ public class OpenInventoryCommand implements CommandExecutor {
 			Player player = (Player) sender;
 			if(args.length >= 1) {
 				Player target = Bukkit.getPlayer(args[0]);
-				
 				if(target != null)
 					player.openInventory(target.getInventory());
 				else

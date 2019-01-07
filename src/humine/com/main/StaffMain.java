@@ -9,19 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import humine.com.commands.AnnonceCommand;
-import humine.com.commands.AutoMessageCommand;
-import humine.com.commands.OpenEnderChestCommand;
-import humine.com.commands.OpenInventoryCommand;
-import humine.com.commands.VanishCommand;
+import humine.com.commands.*;
 import humine.com.commands.voteban.OpenVoteBanCommand;
 import humine.com.commands.voteban.VoteBanCommand;
-import humine.com.events.BreakDiamondBlockEvent;
-import humine.com.events.FilterBlockInEnderChestEvent;
-import humine.com.events.MessageJoinEvent;
-import humine.com.events.MessageQuitEvent;
-import humine.com.events.SaveEnderChestEvent;
-import humine.com.events.SavePlayerInventoryEvent;
+import humine.com.events.*;
 
 public class StaffMain extends JavaPlugin{
 
@@ -46,7 +37,6 @@ public class StaffMain extends JavaPlugin{
 			e.printStackTrace();
 		}
 		this.autoMessage.getOnFile(this.getDataFolder());
-		this.autoMessage.startLoop();
 		
 		initiliazeEvents();
 		initializeCommands();
@@ -78,6 +68,7 @@ public class StaffMain extends JavaPlugin{
 		this.getCommand("voteban").setExecutor(new OpenVoteBanCommand());
 		this.getCommand("voteban").setExecutor(new VoteBanCommand());
 		this.getCommand("automessage").setExecutor(new AutoMessageCommand());
+		this.getCommand("lien").setExecutor(new OpenLienCommand());
 	}
 	
 	
