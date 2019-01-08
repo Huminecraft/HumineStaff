@@ -141,18 +141,18 @@ public class PermissionCommand implements CommandExecutor
 					StaffMain.sendMessage(sender, "/permission disinherit <groupReceiver> <group>");
 			}
 			
-			if (args[0].equalsIgnoreCase("list"))
-			{
-				list(sender, args);
-				return true;
-			}
-			
-			if (args[0].equalsIgnoreCase("help"))
-			{
-				help(sender);
-				return true;
-			}
-
+		}
+		
+		if (args[0].equalsIgnoreCase("list"))
+		{
+			list(sender, args);
+			return true;
+		}
+		
+		if (args[0].equalsIgnoreCase("help"))
+		{
+			help(sender);
+			return true;
 		}
 
 		return false;
@@ -210,9 +210,6 @@ public class PermissionCommand implements CommandExecutor
 				afficherPermission(sender, group);
 				afficherInherit(sender, group);
 				afficherJoueur(sender, group);
-				
-				for(String perm : group.getPermissionsList())
-					sender.sendMessage("- " + ChatColor.GOLD + perm);
 			}
 			else
 				StaffMain.sendMessage(sender, "Groupe introuvable");
