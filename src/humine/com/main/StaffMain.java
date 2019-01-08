@@ -10,9 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import humine.com.commands.*;
+import humine.com.commands.permissions.PermissionCommand;
 import humine.com.commands.voteban.OpenVoteBanCommand;
 import humine.com.commands.voteban.VoteBanCommand;
 import humine.com.events.*;
+import humine.com.permissions.PermissionGroupManager;
 
 public class StaffMain extends JavaPlugin{
 
@@ -21,6 +23,7 @@ public class StaffMain extends JavaPlugin{
 	private ArrayList<Player> vanished;
 	private AutoMessage autoMessage;
 	private VoteBan voteBan;
+	private PermissionGroupManager permissionGroupManager;
 	
 	@Override
 	public void onEnable() {
@@ -28,6 +31,7 @@ public class StaffMain extends JavaPlugin{
 		this.vanished = new ArrayList<Player>();
 		this.autoMessage = new AutoMessage();
 		this.voteBan = new VoteBan();
+		this.permissionGroupManager = new PermissionGroupManager();
 		
 		this.saveDefaultConfig();
 		FileManager.makeDeFaultConfiguration(this.getDataFolder());
@@ -69,6 +73,7 @@ public class StaffMain extends JavaPlugin{
 		this.getCommand("voteban").setExecutor(new VoteBanCommand());
 		this.getCommand("automessage").setExecutor(new AutoMessageCommand());
 		this.getCommand("lien").setExecutor(new OpenLienCommand());
+		this.getCommand("permission").setExecutor(new PermissionCommand());
 	}
 	
 	
@@ -99,4 +104,15 @@ public class StaffMain extends JavaPlugin{
 	public void setVoteBan(VoteBan voteBan) {
 		this.voteBan = voteBan;
 	}
+
+	public PermissionGroupManager getPermissionGroupManager()
+	{
+		return permissionGroupManager;
+	}
+
+	public void setPermissionGroupManager(PermissionGroupManager permissionGroupManager)
+	{
+		this.permissionGroupManager = permissionGroupManager;
+	}
+	
 }
