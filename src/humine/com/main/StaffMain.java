@@ -1,5 +1,6 @@
 package humine.com.main;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -14,6 +15,8 @@ import humine.com.commands.permissions.PermissionCommand;
 import humine.com.commands.voteban.OpenVoteBanCommand;
 import humine.com.commands.voteban.VoteBanCommand;
 import humine.com.events.*;
+import humine.com.events.permissions.PermissionJoinCommand;
+import humine.com.permissions.PermissionGroup;
 import humine.com.permissions.PermissionGroupManager;
 
 public class StaffMain extends JavaPlugin{
@@ -42,6 +45,7 @@ public class StaffMain extends JavaPlugin{
 		}
 		this.autoMessage.getOnFile(this.getDataFolder());
 		
+		initiliazePermission();
 		initiliazeEvents();
 		initializeCommands();
 	}
@@ -50,8 +54,36 @@ public class StaffMain extends JavaPlugin{
 	public void onDisable() {
 		try {
 			this.autoMessage.save(this.getDataFolder());
+			
+			for(PermissionGroup group : this.permissionGroupManager.getPermissionGroups()) {
+				File file = new File(this.getDataFolder(), "Group/"+group.getName()+".yml");
+				group.save(file);
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void initiliazePermission()
+	{
+		File folder = new File(this.getDataFolder(), "Group");
+		String name = "";
+		for(File file : folder.listFiles()) {
+			name = file.getName();
+			name = name.substring(0, name.length() - 4);
+			PermissionGroup group = new PermissionGroup(this, name);
+			group.getSave(file);
+			this.permissionGroupManager.addPermissionGroup(group);
+		}
+		
+		if(!this.permissionGroupManager.containsDefaultPermissionGroup()) {
+			PermissionGroup group = new PermissionGroup(this, "user");
+			group.setDefault(true);
+			for(Player player : Bukkit.getOnlinePlayers())
+				group.addPlayer(player);
+			
+			this.permissionGroupManager.addPermissionGroup(group);
 		}
 	}
 	
@@ -62,6 +94,7 @@ public class StaffMain extends JavaPlugin{
 		this.getServer().getPluginManager().registerEvents(new MessageQuitEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new BreakDiamondBlockEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new FilterBlockInEnderChestEvent(), this);
+		this.getServer().getPluginManager().registerEvents(new PermissionJoinCommand(), this);
 	}
 	
 	private void initializeCommands() {

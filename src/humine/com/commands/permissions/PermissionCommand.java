@@ -1,5 +1,7 @@
 package humine.com.commands.permissions;
 
+import java.io.File;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -170,7 +172,7 @@ public class PermissionCommand implements CommandExecutor
 		sender.sendMessage("§3/permission delete group §c<group>");
 		sender.sendMessage("§3/permission inherit §c<group> <group> ");
 		sender.sendMessage("§3/permission disinherit §c<group> <group>");
-		sender.sendMessage("§3/permission list §6[group] [player|permission|inherit|default]");
+		sender.sendMessage("§3/permission list §6[group] [player | permission | inherit | default]");
 		sender.sendMessage("§3/permission help");
 	}
 
@@ -181,22 +183,22 @@ public class PermissionCommand implements CommandExecutor
 				PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[1]);
 				if(args[2].equalsIgnoreCase("player")) {
 					sender.sendMessage(group.getName() + ":");
-					afficherJoueur(sender, group);
+					group.showPlayer(sender);
 				}
 				
 				if(args[2].equalsIgnoreCase("default")) {
 					sender.sendMessage(group.getName() + ":");
-					afficherDefault(sender, group);
+					group.showDefault(sender);
 				}
 				
 				if(args[2].equalsIgnoreCase("permission")) {
 					sender.sendMessage(group.getName() + ":");
-					afficherPermission(sender, group);
+					group.showPermission(sender);
 				}
 				
 				if(args[2].equalsIgnoreCase("inherit")) {
 					sender.sendMessage(group.getName() + ":");
-					afficherInherit(sender, group);
+					group.showInherit(sender);
 				}
 			}
 			else
@@ -206,10 +208,7 @@ public class PermissionCommand implements CommandExecutor
 			if(isGroup(args[1])) {
 				PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[1]);
 				sender.sendMessage(group.getName() + ":");
-				afficherDefault(sender, group);
-				afficherPermission(sender, group);
-				afficherInherit(sender, group);
-				afficherJoueur(sender, group);
+				group.showAll(sender);
 			}
 			else
 				StaffMain.sendMessage(sender, "Groupe introuvable");
@@ -219,42 +218,12 @@ public class PermissionCommand implements CommandExecutor
 			for(PermissionGroup group : StaffMain.getInstance().getPermissionGroupManager().getPermissionGroups())
 				message += ChatColor.GOLD + group.getName() + "§r, ";
 			
+			if(!message.equals("") && message.length() >= 2)
+				message = message.substring(0, message.length() - 2);
+			
 			sender.sendMessage("Groupe(s):");
 			sender.sendMessage(message);
 		}
-	}
-
-	private void afficherJoueur(CommandSender sender, PermissionGroup group)
-	{
-		String message = "";
-		for(String player : group.getPlayers())
-			message += ChatColor.GOLD + player + "§r, ";
-		
-		sender.sendMessage(message);
-	}
-
-	private void afficherInherit(CommandSender sender, PermissionGroup group)
-	{
-		String message = "";
-		for(PermissionGroup g : group.getInherits())
-			message += ChatColor.GOLD + g.getName() + "§r, ";
-	
-		sender.sendMessage("Heritage: " + message);
-		
-	}
-
-	private void afficherPermission(CommandSender sender, PermissionGroup group)
-	{
-		for(String perm : group.getPermissionsList())
-			sender.sendMessage("- " + ChatColor.GOLD + perm);
-	}
-
-	private void afficherDefault(CommandSender sender, PermissionGroup group)
-	{
-		if(group.isDefault())
-			sender.sendMessage("Default: " + ChatColor.GREEN + "true");
-		else
-			sender.sendMessage("Default: " + ChatColor.RED + "false");
 	}
 
 	private void disinherit(CommandSender sender, String[] args)
@@ -263,8 +232,12 @@ public class PermissionCommand implements CommandExecutor
 			if(isGroup(args[2])) {
 				PermissionGroup group1 = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[1]);
 				PermissionGroup group2 = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
-				group1.removeInherit(group2);
-				StaffMain.sendMessage(sender, "Maintenant " + args[1] + " n'hérite plus de " + args[2] + " !");
+				if(group1.containsInherit(group2)) {
+					group1.removeInherit(group2);
+					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " n'hérite plus de " + args[2] + " !");
+				}
+				else
+					StaffMain.sendMessage(sender, args[1] + " n'herite pas de " + args[2] + " !");
 			}
 			else
 				StaffMain.sendMessage(sender, "Groupe " + args[2] + " introuvable");
@@ -279,8 +252,13 @@ public class PermissionCommand implements CommandExecutor
 			if(isGroup(args[2])) {
 				PermissionGroup group1 = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[1]);
 				PermissionGroup group2 = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
-				group1.addInherit(group2);
-				StaffMain.sendMessage(sender, "Maintenant " + args[1] + " hérite de " + args[2] + " !");
+				if(!group1.containsInherit(group2)) {
+					group1.addInherit(group2);
+					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " hérite de " + args[2] + " !");
+				}
+				else
+					StaffMain.sendMessage(sender, args[1] + " herite deja de " + args[2] + " !");
+				
 			}
 			else
 				StaffMain.sendMessage(sender, "Groupe " + args[2] + " introuvable");
@@ -294,11 +272,19 @@ public class PermissionCommand implements CommandExecutor
 		if(isGroup(args[2])) {
 			PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
 			StaffMain.getInstance().getPermissionGroupManager().removePermissionGroup(group);
+			StaffMain.getInstance().getPermissionGroupManager().removeInheritGroup(group);
 			
 			if(group.isDefault()) {
-				if(!StaffMain.getInstance().getPermissionGroupManager().isEmpty())
-					StaffMain.getInstance().getPermissionGroupManager().setDefaultPermissionGroup(StaffMain.getInstance().getPermissionGroupManager().getPermissionGroups().get(0));
+				if(!StaffMain.getInstance().getPermissionGroupManager().isEmpty()) {
+					PermissionGroup defaultGroup = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroups().get(0);
+					StaffMain.getInstance().getPermissionGroupManager().setDefaultPermissionGroup(defaultGroup);
+					StaffMain.sendMessage(sender, defaultGroup.getName() + " est nommé comme groupe par défaut");
+				}
 			}
+			
+			File file = new File(StaffMain.getInstance().getDataFolder(), "Group/"+group.getName()+".yml");
+			if(file.exists())
+				file.delete();
 			
 			StaffMain.sendMessage(sender, "Groupe " + args[2] + " supprimé !");
 		}
@@ -326,10 +312,14 @@ public class PermissionCommand implements CommandExecutor
 	{
 		if(isGroup(args[2])) {
 			if(isPlayer(args[3])) {
-				Player player = Bukkit.getPlayer(args[2]);
+				Player player = Bukkit.getPlayer(args[3]);
 				PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
-				group.removePlayer(player);
-				StaffMain.sendMessage(sender, args[3] + " supprimé du groupe " + ChatColor.GREEN + args[2]);
+				if(group.containsPlayer(player)) {
+					group.removePlayer(player);
+					StaffMain.sendMessage(sender, args[3] + " supprimé du groupe " + ChatColor.GREEN + args[2]);
+				}
+				else
+					StaffMain.sendMessage(sender, args[3] + " n'est pas dans ce groupe !");
 			}
 			else
 				StaffMain.sendMessage(sender, "Joueur introuvable");
@@ -348,8 +338,14 @@ public class PermissionCommand implements CommandExecutor
 		}
 		else if(isGroup(args[2])) {
 			PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
-			group.removePermission(args[3]);
-			StaffMain.sendMessage(sender, "Permission supprimé au groupe " + args[2] + ": " + ChatColor.GOLD + args[3]);
+			if(group.containsPermission(args[3])) {
+				group.removePermission(args[3]);
+				StaffMain.getInstance().getPermissionGroupManager().removeInheritPermission(group, args[3]);
+				StaffMain.sendMessage(sender, "Permission supprimé au groupe " + args[2] + ": " + ChatColor.GOLD + args[3]);
+			}
+			else
+				StaffMain.sendMessage(sender, args[3] + ": Permission introuvable");
+			
 		}
 		else {
 			StaffMain.sendMessage(sender, args[2] + " introuvable");
@@ -360,10 +356,14 @@ public class PermissionCommand implements CommandExecutor
 	{
 		if(isGroup(args[2])) {
 			if(isPlayer(args[3])) {
-				Player player = Bukkit.getPlayer(args[2]);
+				Player player = Bukkit.getPlayer(args[3]);
 				PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
-				group.addPlayer(player);
-				StaffMain.sendMessage(sender, args[3] + " ajouté dans le groupe " + ChatColor.GREEN + args[2]);
+				if(!group.containsPlayer(player)) {
+					group.addPlayer(player);
+					StaffMain.sendMessage(sender, args[3] + " ajouté dans le groupe " + ChatColor.GREEN + args[2]);
+				}
+				else
+					StaffMain.sendMessage(sender, args[3] + " est deja dans ce groupe !");
 			}
 			else
 				StaffMain.sendMessage(sender, "Joueur introuvable");
@@ -382,8 +382,13 @@ public class PermissionCommand implements CommandExecutor
 		}
 		else if(isGroup(args[2])) {
 			PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
-			group.addPermission(args[3]);
-			StaffMain.sendMessage(sender, "Permission ajoutée au groupe " + args[2] + ": " + ChatColor.GOLD + args[3]);
+			if(!group.containsPermission(args[3])) {
+				group.addPermission(args[3]);
+				StaffMain.getInstance().getPermissionGroupManager().addInheritPermission(group, args[3]);
+				StaffMain.sendMessage(sender, "Permission ajoutée au groupe " + args[2] + ": " + ChatColor.GOLD + args[3]);
+			}
+			else
+				StaffMain.sendMessage(sender, args[3] + ": Contient deja la permission");
 		}
 		else {
 			StaffMain.sendMessage(sender, args[2] + " introuvable");
@@ -401,11 +406,12 @@ public class PermissionCommand implements CommandExecutor
 
 	private boolean isPlayer(String player)
 	{
-		Player p = Bukkit.getPlayer(player);
-		if(p != null)
-			return true;
-		else
-			return false;
+		for(Player p : Bukkit.getOnlinePlayers()) {
+			if(p.getName().equals(player))
+				return true;
+		}
+		
+		return false;
 	}
 
 }

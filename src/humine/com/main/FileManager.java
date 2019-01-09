@@ -24,6 +24,10 @@ public abstract class FileManager {
 		if(!file.exists())
 			file.mkdirs();
 		
+		file = new File(folder, "Group");
+		if(!file.exists())
+			file.mkdirs();
+		
 		FileManager.folder = folder;
 	}
 	
