@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,7 +17,7 @@ import humine.com.commands.permissions.PermissionCommand;
 import humine.com.commands.voteban.OpenVoteBanCommand;
 import humine.com.commands.voteban.VoteBanCommand;
 import humine.com.events.*;
-import humine.com.events.permissions.PermissionJoinCommand;
+import humine.com.events.permissions.PermissionJoinEvent;
 import humine.com.permissions.PermissionGroup;
 import humine.com.permissions.PermissionGroupManager;
 
@@ -58,6 +60,7 @@ public class StaffMain extends JavaPlugin{
 			for(PermissionGroup group : this.permissionGroupManager.getPermissionGroups()) {
 				File file = new File(this.getDataFolder(), "Group/"+group.getName()+".yml");
 				group.save(file);
+				
 			}
 			
 		} catch (IOException e) {
@@ -68,12 +71,19 @@ public class StaffMain extends JavaPlugin{
 	private void initiliazePermission()
 	{
 		File folder = new File(this.getDataFolder(), "Group");
+		File prefixFile = new File(this.getDataFolder(), "prefix.yml");
+		FileConfiguration config = YamlConfiguration.loadConfiguration(prefixFile);
+		
 		String name = "";
 		for(File file : folder.listFiles()) {
 			name = file.getName();
 			name = name.substring(0, name.length() - 4);
 			PermissionGroup group = new PermissionGroup(this, name);
 			group.getSave(file);
+			
+			if(config.contains(group.getName()))
+				group.setPrefix(config.getString(group.getName()));
+			
 			this.permissionGroupManager.addPermissionGroup(group);
 		}
 		
@@ -84,6 +94,15 @@ public class StaffMain extends JavaPlugin{
 				group.addPlayer(player);
 			
 			this.permissionGroupManager.addPermissionGroup(group);
+			
+		}
+		
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			if(StaffMain.getInstance().getPermissionGroupManager().containsPlayer(player)) {
+				StaffMain.getInstance().getPermissionGroupManager().calculatePermission(player);
+			}
+			else if(StaffMain.getInstance().getPermissionGroupManager().containsDefaultPermissionGroup() && !StaffMain.getInstance().getPermissionGroupManager().getDefaultPermissionGroup().containsPlayer(player))
+				StaffMain.getInstance().getPermissionGroupManager().addPlayerToDefault(player);
 		}
 	}
 	
@@ -94,7 +113,7 @@ public class StaffMain extends JavaPlugin{
 		this.getServer().getPluginManager().registerEvents(new MessageQuitEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new BreakDiamondBlockEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new FilterBlockInEnderChestEvent(), this);
-		this.getServer().getPluginManager().registerEvents(new PermissionJoinCommand(), this);
+		this.getServer().getPluginManager().registerEvents(new PermissionJoinEvent(), this);
 	}
 	
 	private void initializeCommands() {
@@ -147,5 +166,5 @@ public class StaffMain extends JavaPlugin{
 	{
 		this.permissionGroupManager = permissionGroupManager;
 	}
-	
+
 }

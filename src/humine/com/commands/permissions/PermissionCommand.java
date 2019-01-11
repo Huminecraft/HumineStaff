@@ -192,10 +192,13 @@ public class PermissionCommand implements CommandExecutor {
 						.getPermissionGroup(args[2]);
 				if (group1.containsInherit(group2)) {
 					group1.removeInherit(group2);
+					StaffMain.getInstance().getPermissionGroupManager().refreshRemoveInheritGroupPermission(group1, group2);
 					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " n'hérite plus de " + args[2] + " !");
-				} else
-					StaffMain.sendMessage(sender, args[1] + " n'hérite pas de " + args[2] + " !");
-			} else
+				}
+				else
+					StaffMain.sendMessage(sender, args[1] + " n'herite pas de " + args[2] + " !");
+			}
+			else
 				StaffMain.sendMessage(sender, "Groupe " + args[2] + " introuvable");
 		} else
 			StaffMain.sendMessage(sender, "Groupe " + args[1] + " introuvable");
@@ -210,12 +213,14 @@ public class PermissionCommand implements CommandExecutor {
 						.getPermissionGroup(args[2]);
 				if (!group1.containsInherit(group2)) {
 					group1.addInherit(group2);
-					StaffMain.getInstance().getPermissionGroupManager().refreshInheritGroup(group1, true);
-					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " hérite de " + args[2] + " !");
-				} else
-					StaffMain.sendMessage(sender, args[1] + " hérite deja de " + args[2] + " !");
-
-			} else
+					StaffMain.getInstance().getPermissionGroupManager().refreshAddInheritGroupPermission(group1);
+					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " h�rite de " + args[2] + " !");
+				}
+				else
+					StaffMain.sendMessage(sender, args[1] + " herite deja de " + args[2] + " !");
+				
+			}
+			else
 				StaffMain.sendMessage(sender, "Groupe " + args[2] + " introuvable");
 		} else
 			StaffMain.sendMessage(sender, "Groupe " + args[1] + " introuvable");
@@ -225,12 +230,16 @@ public class PermissionCommand implements CommandExecutor {
 		if (isGroup(args[2])) {
 			PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
 			StaffMain.getInstance().getPermissionGroupManager().removePermissionGroup(group);
-			StaffMain.getInstance().getPermissionGroupManager().removeInheritGroup(group);
-
-			if (group.isDefault()) {
-				if (!StaffMain.getInstance().getPermissionGroupManager().isEmpty()) {
-					PermissionGroup defaultGroup = StaffMain.getInstance().getPermissionGroupManager()
-							.getPermissionGroups().get(0);
+			StaffMain.getInstance().getPermissionGroupManager().refreshRemoveInheritGroupPermission(group, group);
+			for(String player : group.getPlayers()) {
+				Player p = Bukkit.getPlayer(player);
+				if(p != null)
+					StaffMain.getInstance().getPermissionGroupManager().refreshPrefixNamePlayer(p);
+			}
+			
+			if(group.isDefault()) {
+				if(!StaffMain.getInstance().getPermissionGroupManager().isEmpty()) {
+					PermissionGroup defaultGroup = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroups().get(0);
 					StaffMain.getInstance().getPermissionGroupManager().setDefaultPermissionGroup(defaultGroup);
 					StaffMain.sendMessage(sender, defaultGroup.getName() + " est nommé comme groupe par défaut");
 				}

@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import humine.com.main.StaffMain;
 
-public class PermissionJoinCommand implements Listener
+public class PermissionJoinEvent implements Listener
 {
 
 	@EventHandler
@@ -17,8 +17,8 @@ public class PermissionJoinCommand implements Listener
 		if(StaffMain.getInstance().getPermissionGroupManager().containsPlayer(player)) {
 			StaffMain.getInstance().getPermissionGroupManager().calculatePermission(player);
 		}
-		
-		if(StaffMain.getInstance().getPermissionGroupManager().containsDefaultPermissionGroup() && !StaffMain.getInstance().getPermissionGroupManager().getDefaultPermissionGroup().containsPlayer(player))
+		else if(StaffMain.getInstance().getPermissionGroupManager().containsDefaultPermissionGroup() && !StaffMain.getInstance().getPermissionGroupManager().getDefaultPermissionGroup().containsPlayer(player))
 			StaffMain.getInstance().getPermissionGroupManager().addPlayerToDefault(player);
+		
 	}
 }
