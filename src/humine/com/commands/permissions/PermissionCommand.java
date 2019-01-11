@@ -214,7 +214,7 @@ public class PermissionCommand implements CommandExecutor {
 				if (!group1.containsInherit(group2)) {
 					group1.addInherit(group2);
 					StaffMain.getInstance().getPermissionGroupManager().refreshAddInheritGroupPermission(group1);
-					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " h�rite de " + args[2] + " !");
+					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " hérite de " + args[2] + " !");
 				}
 				else
 					StaffMain.sendMessage(sender, args[1] + " herite deja de " + args[2] + " !");

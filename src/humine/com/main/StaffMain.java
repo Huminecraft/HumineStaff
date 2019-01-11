@@ -3,6 +3,7 @@ package humine.com.main;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,6 +30,7 @@ public class StaffMain extends JavaPlugin{
 	private AutoMessage autoMessage;
 	private VoteBan voteBan;
 	private PermissionGroupManager permissionGroupManager;
+	private List<String> PlayerInBed;
 	
 	@Override
 	public void onEnable() {
@@ -37,6 +39,11 @@ public class StaffMain extends JavaPlugin{
 		this.autoMessage = new AutoMessage();
 		this.voteBan = new VoteBan();
 		this.permissionGroupManager = new PermissionGroupManager();
+		this.PlayerInBed = new ArrayList<String>();
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			if(player.isSleeping())
+				this.PlayerInBed.add(player.getName());
+		}
 		
 		this.saveDefaultConfig();
 		FileManager.makeDeFaultConfiguration(this.getDataFolder());
@@ -114,6 +121,7 @@ public class StaffMain extends JavaPlugin{
 		this.getServer().getPluginManager().registerEvents(new BreakDiamondBlockEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new FilterBlockInEnderChestEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new PermissionJoinEvent(), this);
+		this.getServer().getPluginManager().registerEvents(new PlayerSleepEvent(), this);
 	}
 	
 	private void initializeCommands() {
@@ -165,6 +173,14 @@ public class StaffMain extends JavaPlugin{
 	public void setPermissionGroupManager(PermissionGroupManager permissionGroupManager)
 	{
 		this.permissionGroupManager = permissionGroupManager;
+	}
+
+	public List<String> getPlayerInBed() {
+		return PlayerInBed;
+	}
+
+	public void setPlayerInBed(List<String> playerInBed) {
+		PlayerInBed = playerInBed;
 	}
 
 }
