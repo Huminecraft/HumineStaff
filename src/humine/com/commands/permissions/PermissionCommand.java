@@ -234,6 +234,7 @@ public class PermissionCommand implements CommandExecutor
 				PermissionGroup group2 = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
 				if(group1.containsInherit(group2)) {
 					group1.removeInherit(group2);
+					StaffMain.getInstance().getPermissionGroupManager().refreshRemoveInheritGroupPermission(group1, group2);
 					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " n'hérite plus de " + args[2] + " !");
 				}
 				else
@@ -254,6 +255,7 @@ public class PermissionCommand implements CommandExecutor
 				PermissionGroup group2 = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
 				if(!group1.containsInherit(group2)) {
 					group1.addInherit(group2);
+					StaffMain.getInstance().getPermissionGroupManager().refreshAddInheritGroupPermission(group1);
 					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " hérite de " + args[2] + " !");
 				}
 				else
@@ -272,7 +274,12 @@ public class PermissionCommand implements CommandExecutor
 		if(isGroup(args[2])) {
 			PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
 			StaffMain.getInstance().getPermissionGroupManager().removePermissionGroup(group);
-			StaffMain.getInstance().getPermissionGroupManager().removeInheritGroup(group);
+			StaffMain.getInstance().getPermissionGroupManager().refreshRemoveInheritGroupPermission(group, group);
+			for(String player : group.getPlayers()) {
+				Player p = Bukkit.getPlayer(player);
+				if(p != null)
+					StaffMain.getInstance().getPermissionGroupManager().refreshPrefixNamePlayer(p);
+			}
 			
 			if(group.isDefault()) {
 				if(!StaffMain.getInstance().getPermissionGroupManager().isEmpty()) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
 
+
 public class PermissionGroupManager
 {
 	private ArrayList<PermissionGroup> groups;
@@ -120,9 +121,10 @@ public class PermissionGroupManager
 
 	public void calculatePermission(Player player)
 	{
+		addPlayerToDefault(player);
 		for (PermissionGroup group : this.groups)
 		{
-			if (group.containsPlayer(player))
+			if (!group.isDefault() && group.containsPlayer(player))
 			{
 				group.addPlayer(player);
 			}
@@ -151,24 +153,49 @@ public class PermissionGroupManager
 		}
 	}
 
-	public void addInheritGroup(PermissionGroup group)
+	public void refreshAddInheritGroupPermission(PermissionGroup group)
 	{
 		for (PermissionGroup g : this.groups)
 		{
-			if (!g.containsInherit(group))
+			if (g.containsInherit(group))
 			{
 				g.addInherit(group);
 			}
 		}
 	}
 
-	public void removeInheritGroup(PermissionGroup group)
+	public void refreshRemoveInheritGroupPermission(PermissionGroup defaultGroup, PermissionGroup GroupDisinherit)
 	{
 		for (PermissionGroup g : this.groups)
 		{
-			if (g.containsInherit(group))
+			if (g.containsInherit(defaultGroup))
 			{
-				g.removeInherit(group);
+				g.removeInherit(GroupDisinherit);
+			}
+		}
+	}
+
+	public void refreshPrefixNamePlayer(Player player)
+	{
+		player.setCustomNameVisible(true);
+		if (!getDefaultPermissionGroup().getPrefix().equals(""))
+		{
+			player.setDisplayName(getDefaultPermissionGroup().getPrefix() + " " + player.getName());
+			player.setPlayerListName(getDefaultPermissionGroup().getPrefix() + " " + player.getName());
+		}
+		else
+		{
+			player.setDisplayName(player.getName());
+			player.setPlayerListName(player.getName());
+		}
+		
+		for (PermissionGroup g : this.groups)
+		{
+			if (!g.isDefault() && g.containsPlayer(player))
+			{
+				player.setCustomNameVisible(true);
+				player.setDisplayName(g.getPrefix() + " " + player.getName());
+				player.setPlayerListName(g.getPrefix() + " " + player.getName());
 			}
 		}
 	}

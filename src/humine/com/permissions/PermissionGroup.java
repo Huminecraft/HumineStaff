@@ -22,6 +22,7 @@ public class PermissionGroup
 {
 
 	private String									name;
+	private String									prefix;
 	private boolean									defaut;
 	private Plugin									plugin;
 
@@ -32,21 +33,51 @@ public class PermissionGroup
 	public PermissionGroup(Plugin plugin, String name)
 	{
 		this.name = name;
+		this.prefix = "";
 		this.plugin = plugin;
 		this.defaut = false;
 		this.permissionsPlayer = new HashMap<String, PermissionAttachment>();
 		this.permissionsList = new ArrayList<String>();
 		this.groupInherit = new ArrayList<String>();
+
+		File file = new File(StaffMain.getInstance().getDataFolder(), "prefix.yml");
+		FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+		if (!config.contains(this.name))
+		{
+			config.set(this.name, this.prefix);
+			try
+			{
+				config.save(file);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public PermissionGroup(Plugin plugin, String name, boolean defaut)
 	{
 		this.name = name;
+		this.prefix = "";
 		this.plugin = plugin;
 		this.defaut = defaut;
 		this.permissionsPlayer = new HashMap<String, PermissionAttachment>();
 		this.permissionsList = new ArrayList<String>();
 		this.groupInherit = new ArrayList<String>();
+
+		File file = new File(StaffMain.getInstance().getDataFolder(), "prefix.yml");
+		FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+		config.set(this.name, this.prefix);
+		try
+		{
+			config.save(file);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public void addPlayer(Player player)
@@ -59,6 +90,15 @@ public class PermissionGroup
 				attachment.setPermission(perm, true);
 
 			this.permissionsPlayer.put(player.getName(), attachment);
+			
+			if(!this.prefix.equals("")) {
+				player.setCustomNameVisible(true);
+				player.setDisplayName(this.prefix + " " + player.getName());
+				player.setPlayerListName(this.prefix + " " + player.getName());
+			}
+				
+			
+			
 		}
 		catch (NullPointerException e)
 		{
@@ -97,7 +137,8 @@ public class PermissionGroup
 
 	public void removePermission(String permission)
 	{
-		if (this.permissionsList.contains(permission)) {
+		if (this.permissionsList.contains(permission))
+		{
 			for (Entry<String, PermissionAttachment> perm : this.permissionsPlayer.entrySet())
 			{
 				perm.getValue().setPermission(permission, false);
@@ -136,10 +177,12 @@ public class PermissionGroup
 				p.getValue().setPermission(permission, false);
 			}
 		}
-		
-		for(PermissionGroup group : StaffMain.getInstance().getPermissionGroupManager().getPermissionGroups()) {
-			if(this.groupInherit.contains(group.getName())) {
-				for(String perm : group.getPermissionsList())
+
+		for (PermissionGroup group : StaffMain.getInstance().getPermissionGroupManager().getPermissionGroups())
+		{
+			if (this.groupInherit.contains(group.getName()))
+			{
+				for (String perm : group.getPermissionsList())
 					addPermission(perm);
 			}
 		}
@@ -267,6 +310,16 @@ public class PermissionGroup
 	public ArrayList<String> getPermissionsList()
 	{
 		return permissionsList;
+	}
+
+	public String getPrefix()
+	{
+		return prefix;
+	}
+
+	public void setPrefix(String prefix)
+	{
+		this.prefix = prefix;
 	}
 
 	public void setPermissionsList(ArrayList<String> permissionsList)
