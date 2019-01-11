@@ -5,18 +5,10 @@ version: 1.0a
 api-version: 1.13
 commands:
   invsee:
-    
   endsee:
-    
   annonce:
-    
   vanish:
-    
   voteban:
-    
   automessage:
-    
   lien:
-    
   permission:
-    

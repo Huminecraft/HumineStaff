@@ -305,7 +305,7 @@ public class PermissionGroup
 	{
 		String message = "";
 		for (String player : getPlayers())
-			message += ChatColor.GOLD + player + "§r, ";
+			message += ChatColor.GOLD + player + "Â§r, ";
 		if (!message.equals("") && message.length() >= 2)
 			message = message.substring(0, message.length() - 2);
 		sender.sendMessage(message);
@@ -315,7 +315,7 @@ public class PermissionGroup
 	{
 		String message = "";
 		for (String g : getInherits())
-			message += ChatColor.GREEN + g + "§r, ";
+			message += ChatColor.GREEN + g + "Â§r, ";
 		if (!message.equals("") && message.length() >= 2)
 			message = message.substring(0, message.length() - 2);
 		sender.sendMessage("Heritage: " + message);
