@@ -29,3 +29,6 @@ pour lui remercier d’avoir voté pour le serveur. (/!\ une fois par jour)
 * ```/invsee [player]``` : Permet de regarder l'inventaire d'un joueur spécifique
 
 * ```/vanish``` : Permet de se rendre invisible sur les listes et sur le serveur
+
+* ```/tpsmonitor [enable|disable]``` : Permet de se rendre invisible sur les listes et sur le serveur
+
