@@ -31,6 +31,9 @@ public class StaffMain extends JavaPlugin{
 	private VoteBan voteBan;
 	private PermissionGroupManager permissionGroupManager;
 	private List<String> PlayerInBed;
+
+
+
 	
 	@Override
 	public void onEnable() {
@@ -57,13 +60,14 @@ public class StaffMain extends JavaPlugin{
 		initiliazePermission();
 		initiliazeEvents();
 		initializeCommands();
+		TPS.startTPSManager();
 	}
 	
 	@Override
 	public void onDisable() {
 		try {
 			this.autoMessage.save(this.getDataFolder());
-			
+			FileManager.saveTPSConfig(TPS.enabled);
 			for(PermissionGroup group : this.permissionGroupManager.getPermissionGroups()) {
 				File file = new File(this.getDataFolder(), "Group/"+group.getName()+".yml");
 				group.save(file);
@@ -134,6 +138,7 @@ public class StaffMain extends JavaPlugin{
 		this.getCommand("automessage").setExecutor(new AutoMessageCommand());
 		this.getCommand("lien").setExecutor(new OpenLienCommand());
 		this.getCommand("permission").setExecutor(new PermissionCommand());
+		this.getCommand("tpsmonitor").setExecutor(new TPSCommand());
 	}
 	
 	

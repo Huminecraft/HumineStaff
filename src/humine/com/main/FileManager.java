@@ -42,7 +42,11 @@ public abstract class FileManager
 				e.printStackTrace();
 			}
 		}
-
+		
+		file = new File(folder, "TPS.yml");
+		if (!file.exists())
+			file.mkdirs();
+		
 		FileManager.folder = folder;
 	}
 
@@ -120,24 +124,6 @@ public abstract class FileManager
 		config.save(playerFile);
 	}
 
-	public static void saveEnderChestInventory(String name, Inventory inventory) throws IOException
-	{
-		File playerFile = new File(folder, "/EnderChest/" + name + ".yml");
-		if (!playerFile.exists())
-			playerFile.createNewFile();
-
-		FileConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
-		for (short i = 0; i < inventory.getSize(); i++)
-		{
-			if (inventory.getItem(i) != null && inventory.getItem(i).getType() != Material.AIR)
-			{
-				config.set("Inventory." + i, inventory.getItem(i));
-			}
-		}
-
-		config.save(playerFile);
-	}
-
 	public static Inventory getEnderChestInventory(String name)
 	{
 		File playerFile = new File(folder, "/Inventory/" + name + ".yml");
@@ -156,5 +142,28 @@ public abstract class FileManager
 
 		return null;
 	}
+	
+	public static void saveTPSConfig(boolean enabled) throws IOException
+	{
+		File TPSFile = new File(folder, "TPS.yml");
+		if (!TPSFile.exists())
+			TPSFile.createNewFile();
 
+		FileConfiguration config = YamlConfiguration.loadConfiguration(TPSFile);
+		config.set("TPSMonitor", enabled);
+
+		config.save(TPSFile);
+	}
+
+	public static boolean getTPSConfig()
+	{
+		File TPSFile = new File(folder, "TPS.yml");
+		if (TPSFile.exists())
+		{
+			FileConfiguration config = YamlConfiguration.loadConfiguration(TPSFile);
+			return config.getBoolean("TPSMonitor");
+		}
+
+		return false;
+	}
 }

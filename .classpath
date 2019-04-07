@@ -8,5 +8,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/Librairies/Spigot/spigot-1.13.2.jar"/>
 	<classpathentry kind="lib" path="/Librairies/AYPI/AYPI.V1.4.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/simon/OneDrive/Documents/Workspace/Java/Libraries/Spigot/spigot-1.13.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/simon/OneDrive/Documents/Workspace/Java/Libraries/AYPI/AYPI.V1.4.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
