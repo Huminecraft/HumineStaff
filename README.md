@@ -6,12 +6,12 @@
 * Interdire de mettre des Shulkerboxs dans les hoppers et tout autres systèmes pouvant les poser au sol à la place du joueur.
 
 * Reproduire cette liste :
-![Image1](https://gyazo.com/eafd08267664c24314b749b44b83e2c7)
+![Image1](https://i.gyazo.com/eafd08267664c24314b749b44b83e2c7.png)
 
 * Mettre une alerte dans le chat textuel à ceux qui possèdent la permission quand un joueur mine un minerai de diamant.
 
 * Personnaliser le message quand une personne se connecte et quand il se déconnecte ([-] Herobrix) :
-![Image2](https://gyazo.com/89e5564a5ad8e58efcad5e9207bb401f)
+![Image2](https://i.gyazo.com/89e5564a5ad8e58efcad5e9207bb401f.png)
 
 * Reproduire le même système que le plugin PermissionEx qui permet d’ajouter ou de retirer plusieurs permissions à différents grades à partir d’un document texte.
 
