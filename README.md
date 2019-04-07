@@ -1,37 +1,29 @@
-## Welcome to GitHub Pages
+#Fonctionnalités du plugin :
+Permettre à ceux qui ont la permission de pouvoir regarder l’inventaire et l’enderchest d’un joueur, qu’il soit connecté ou non.
 
-You can use the [editor on GitHub](https://github.com/Huminecraft/HumineStaff/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Permettre à ceux qui ont la permission de pouvoir se rendre invisible dans la liste des connectés et aussi en tant que joueur. Ne pas pouvoir non plus les identifier. Afficher le message de déconnexion ou de reconnexion lorsque la fonctione est activée ou non
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Interdire de mettre des Shulkerboxs dans les hoppers et tout autres systèmes pouvant les poser au sol à la place du joueur.
 
-### Markdown
+Reproduire cette liste :
+![](https://gyazo.com/eafd08267664c24314b749b44b83e2c7)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Mettre une alerte dans le chat textuel à ceux qui possèdent la permission quand un joueur mine un minerai de diamant.
 
-```markdown
-Syntax highlighted code block
+Personnaliser le message quand une personne se connecte et quand il se déconnecte ([-] Herobrix) :
+![](https://gyazo.com/89e5564a5ad8e58efcad5e9207bb401f)
 
-# Header 1
-## Header 2
-### Header 3
+Reproduire le même système que le plugin PermissionEx qui permet d’ajouter ou de retirer plusieurs permissions à différents grades à partir d’un document texte.
 
-- Bulleted
-- List
+Pouvoir afficher des textes automatiquement dans le chat textuel et permettre aux admins de modifier les textes et le temps qui s’écoule entre chaque apparition ceux-ci.
 
-1. Numbered
-2. List
+Permettre aux joueurs de proposer le bannissement d’une personne par vote public.
 
-**Bold** and _Italic_ and `Code` text
+Offrir des pixels lorsque le joueur clique sur ce lien internet http://www.serveurs-minecraft.org/vote.php?id=48763
+pour lui remercier d’avoir voté pour le serveur. (/!\ une fois par jour)
 
-[Link](url) and ![Image](src)
-```
+#Commandes 
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+* ```/invsee [player]``` : Permet de regarder l'inventaire d'un joueur spécifique
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Huminecraft/HumineStaff/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+* ```/vanish``` : Permet de se rendre invisible sur les listes et sur le serveur
