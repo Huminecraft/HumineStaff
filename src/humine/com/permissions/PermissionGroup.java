@@ -307,7 +307,7 @@ public class PermissionGroup
 		this.permissionsPlayer = permissionsPlayer;
 	}
 
-	public ArrayList<String> getPermissionsList()
+	private ArrayList<String> getPermissionsList()
 	{
 		return permissionsList;
 	}
@@ -336,7 +336,7 @@ public class PermissionGroup
 		return players;
 	}
 
-	public ArrayList<String> getInherits()
+	private ArrayList<String> getInherits()
 	{
 		return groupInherit;
 	}

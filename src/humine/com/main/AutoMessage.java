@@ -68,11 +68,11 @@ public class AutoMessage {
 		return messages;
 	}
 
-	public void setMessages(ArrayList<String> messages) {
+	private void setMessages(ArrayList<String> messages) {
 		this.messages = messages;
 	}
 
-	public int getDelay() {
+	private int getDelay() {
 		return delay;
 	}
 
@@ -80,7 +80,7 @@ public class AutoMessage {
 		this.delay = delay;
 	}
 
-	public boolean isLoop() {
+	private boolean isLoop() {
 		return loop;
 	}
 

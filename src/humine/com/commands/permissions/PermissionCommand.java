@@ -343,10 +343,7 @@ public class PermissionCommand implements CommandExecutor {
 
 	private boolean isGroup(String group) {
 		PermissionGroup g = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(group);
-		if (g != null)
-			return true;
-		else
-			return false;
+        return g != null;
 	}
 
 	private boolean isPlayer(String player) {

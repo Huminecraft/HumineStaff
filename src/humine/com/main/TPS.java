@@ -1,13 +1,21 @@
 package humine.com.main;
 
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.Contract;
 
+@SuppressWarnings("ALL")
 public class TPS {
 	public static boolean enabled = FileManager.getTPSConfig();
-        private static double tps;
+	private static double tps;
+
+		@Contract(pure = true)
+		public static double getTPS(){
+			return tps;
+		}
         
         public static void startTPSManager() {
             if (enabled) {
@@ -36,16 +44,22 @@ public class TPS {
     		Bukkit.getServer().getScheduler().runTaskTimer(StaffMain.getInstance(), new Runnable() {
     		    @Override
     		    public void run() {
-    			if (tps < 18.5) {
-    			    Bukkit.getServer().shutdown();
-    			}
-    			Bukkit.getServer().getLogger().log(Level.INFO, "Current TPS : " + Math.round(tps));
-    		    }
+    		    	if (enabled) {
+						ArrayList<Double> history = new ArrayList<Double>();
 
-    		}, 1200, 1200);
-            } else {
-        	System.out.println("Le moniteur de TPS est désactivé!");
+						history.add(tps);
+
+						if (tps < 18.5) {
+							Bukkit.getServer().shutdown();
+						}
+						Bukkit.getServer().getLogger().log(Level.INFO, "TPS Actuel : " + Math.round(tps));
+						Bukkit.getServer().getLogger().log(Level.INFO, "Historique des TPS : " + history);
+					}
+    		    }}, 1200, 1200);
+			} else {
+        		System.out.println("Le moniteur de TPS est désactivé!");
             }
-              
+
         }
+
 }

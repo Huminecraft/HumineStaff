@@ -1,7 +1,7 @@
 name: HumineStaff
 main: humine.com.main.StaffMain
 author: [MizakiGaming, SDAChess]
-version: 1.0.1a
+version: 1.0.2a
 api-version: 1.4.6
 commands:
   invsee:
@@ -13,3 +13,4 @@ commands:
   lien:
   permission:
   tpsmonitor:
+  upvote:

@@ -63,20 +63,20 @@ public class VoteBan {
 		}
 	}
 	
-	public int getNumberOfPersonFor() {
+	private int getNumberOfPersonFor() {
 		int number = 0;
 		for(boolean choose : this.participants.values()) {
-			if(choose == true)
+			if(choose)
 				number += 1;
 		}
 		
 		return number;
 	}
 	
-	public int getNumberOfPersonAgainst() {
+	private int getNumberOfPersonAgainst() {
 		int number = 0;
 		for(boolean choose : this.participants.values()) {
-			if(choose == false)
+			if(!choose)
 				number += 1;
 		}
 		

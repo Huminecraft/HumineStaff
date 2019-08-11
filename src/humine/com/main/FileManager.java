@@ -46,6 +46,9 @@ public abstract class FileManager
 		file = new File(folder, "TPS.yml");
 		if (!file.exists())
 			file.mkdirs();
+		file = new File(folder, "upvote.yml");
+		if (!file.exists())
+			file.mkdirs();
 		
 		FileManager.folder = folder;
 	}
@@ -165,5 +168,34 @@ public abstract class FileManager
 		}
 
 		return false;
+	}
+
+	public static void saveUpvoteConfig(int delay, long reward) throws IOException
+	{
+		File TPSFile = new File(folder, "upvote.yml");
+		if (!TPSFile.exists())
+			TPSFile.createNewFile();
+
+		FileConfiguration config = YamlConfiguration.loadConfiguration(TPSFile);
+		config.set("delay", delay);
+		config.set("reward", reward);
+
+		config.save(TPSFile);
+	}
+
+
+	public static int getUpvoteConfig(String result) {
+		File UpvoteConfig = new File(folder, "upvote.yml");
+		if (UpvoteConfig.exists()){
+			FileConfiguration config = YamlConfiguration.loadConfiguration(UpvoteConfig);
+			int delay = config.getInt("delay");
+			int reward = config.getInt("reward");
+			if (result.equalsIgnoreCase("delay")){
+				return delay;
+			} else {
+				return reward;
+			}
+		}
+		return 0;
 	}
 }

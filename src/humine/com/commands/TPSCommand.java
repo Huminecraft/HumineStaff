@@ -14,7 +14,9 @@ public class TPSCommand implements CommandExecutor {
 			TPS.enabled = true;
 		    } else if (args[0].equalsIgnoreCase("disable")) {
 			TPS.enabled = false;
-		    }
+		    } else if (args[0].equalsIgnoreCase("status")) {
+		    	TPS.getTPS();
+			}
 		}
 		else {
 		    sender.sendMessage("Erreur, veuillez préciser si vous souhaiter activer ou désactiver le monitoring");

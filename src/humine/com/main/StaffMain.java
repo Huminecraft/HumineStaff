@@ -68,6 +68,7 @@ public class StaffMain extends JavaPlugin{
 		try {
 			this.autoMessage.save(this.getDataFolder());
 			FileManager.saveTPSConfig(TPS.enabled);
+			FileManager.saveUpvoteConfig(UpvoteCommand.delay, UpvoteCommand.reward);
 			for(PermissionGroup group : this.permissionGroupManager.getPermissionGroups()) {
 				File file = new File(this.getDataFolder(), "Group/"+group.getName()+".yml");
 				group.save(file);
@@ -139,6 +140,7 @@ public class StaffMain extends JavaPlugin{
 		this.getCommand("lien").setExecutor(new OpenLienCommand());
 		this.getCommand("permission").setExecutor(new PermissionCommand());
 		this.getCommand("tpsmonitor").setExecutor(new TPSCommand());
+		this.getCommand("upvote").setExecutor(new UpvoteCommand());
 	}
 	
 	
