@@ -5,14 +5,11 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.Contract;
 
-@SuppressWarnings("ALL")
 public class TPS {
 	public static boolean enabled = FileManager.getTPSConfig();
 	private static double tps;
 
-		@Contract(pure = true)
 		public static double getTPS(){
 			return tps;
 		}

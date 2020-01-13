@@ -141,6 +141,7 @@ public class StaffMain extends JavaPlugin{
 		this.getCommand("permission").setExecutor(new PermissionCommand());
 		this.getCommand("tpsmonitor").setExecutor(new TPSCommand());
 		this.getCommand("upvote").setExecutor(new UpvoteCommand());
+		this.getCommand("where").setExecutor(new LocateCommand());
 	}
 	
 	
