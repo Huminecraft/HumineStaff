@@ -25,22 +25,35 @@ import humine.com.permissions.PermissionGroupManager;
 public class StaffMain extends JavaPlugin{
 
 	private static StaffMain instance;
+	private static VoteBan voteBan;
+	private static AutoMessage autoMessage;
 	
 	private ArrayList<Player> vanished;
-	private AutoMessage autoMessage;
-	private VoteBan voteBan;
+	
 	private PermissionGroupManager permissionGroupManager;
 	private List<String> PlayerInBed;
-
-
-
 	
+	private File voteBanFolder;
+
 	@Override
 	public void onEnable() {
 		instance = this;
+		
+		this.voteBanFolder = new File(getDataFolder(), "VoteBanLogs");
+		this.voteBanFolder.mkdirs();
+		
 		this.vanished = new ArrayList<Player>();
-		this.autoMessage = new AutoMessage();
-		this.voteBan = new VoteBan();
+		try {
+			autoMessage = AutoMessage.getOnFile(getDataFolder());
+		} catch (ClassNotFoundException | IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		if(autoMessage == null)
+			autoMessage = new AutoMessage();
+		
+		autoMessage.startLoop();
+		voteBan = null;
 		this.permissionGroupManager = new PermissionGroupManager();
 		this.PlayerInBed = new ArrayList<String>();
 		for(Player player : Bukkit.getOnlinePlayers()) {
@@ -55,7 +68,11 @@ public class StaffMain extends JavaPlugin{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		this.autoMessage.getOnFile(this.getDataFolder());
+		try {
+			autoMessage = AutoMessage.getOnFile(this.getDataFolder());
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 		
 		initiliazePermission();
 		initiliazeEvents();
@@ -66,7 +83,7 @@ public class StaffMain extends JavaPlugin{
 	@Override
 	public void onDisable() {
 		try {
-			this.autoMessage.save(this.getDataFolder());
+			AutoMessage.save(autoMessage, this.getDataFolder());
 			FileManager.saveTPSConfig(TPS.enabled);
 			FileManager.saveUpvoteConfig(UpvoteCommand.delay, UpvoteCommand.reward);
 			for(PermissionGroup group : this.permissionGroupManager.getPermissionGroups()) {
@@ -134,7 +151,7 @@ public class StaffMain extends JavaPlugin{
 		this.getCommand("endsee").setExecutor(new OpenEnderChestCommand());
 		this.getCommand("annonce").setExecutor(new AnnonceCommand());
 		this.getCommand("vanish").setExecutor(new VanishCommand());
-		this.getCommand("voteban").setExecutor(new OpenVoteBanCommand());
+		this.getCommand("openvoteban").setExecutor(new OpenVoteBanCommand());
 		this.getCommand("voteban").setExecutor(new VoteBanCommand());
 		this.getCommand("automessage").setExecutor(new AutoMessageCommand());
 		this.getCommand("lien").setExecutor(new OpenLienCommand());
@@ -150,27 +167,27 @@ public class StaffMain extends JavaPlugin{
 	}
 	
 	public static void sendMessage(CommandSender sender, String message) {
-		sender.sendMessage(ChatColor.DARK_AQUA + "[HumineStaff] " + ChatColor.RESET + message);
+		sender.sendMessage(ChatColor.DARK_AQUA + "[Staff] " + ChatColor.RESET + message);
 	}
 	
 	public static void sendBroadCastMessage(String message) {
-		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "[HumineStaff] " + ChatColor.RESET + message);
+		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "[Staff] " + ChatColor.RESET + message);
 	}
 
 	public ArrayList<Player> getVanished() {
 		return vanished;
 	}
 
-	public AutoMessage getAutoMessage() {
+	public static AutoMessage getAutoMessage() {
 		return autoMessage;
 	}
 
-	public VoteBan getVoteBan() {
+	public static VoteBan getVoteBan() {
 		return voteBan;
 	}
 
-	public void setVoteBan(VoteBan voteBan) {
-		this.voteBan = voteBan;
+	public static void setVoteBan(VoteBan vb) {
+		voteBan = vb;
 	}
 
 	public PermissionGroupManager getPermissionGroupManager()
@@ -189,6 +206,10 @@ public class StaffMain extends JavaPlugin{
 
 	public void setPlayerInBed(List<String> playerInBed) {
 		PlayerInBed = playerInBed;
+	}
+	
+	public File getVoteBanFolder() {
+		return voteBanFolder;
 	}
 
 }

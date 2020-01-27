@@ -12,27 +12,43 @@ public class VoteBanCommand implements CommandExecutor{
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		
-		if(sender instanceof Player) {
-			Player player = (Player) sender;
-			if(args.length >= 1 && (args[0].equalsIgnoreCase("yes") || args[0].equalsIgnoreCase("no"))) {
-				if(!StaffMain.getInstance().getVoteBan().getParticipants().containsKey(player)) {
-					if(StaffMain.getInstance().getVoteBan().isInProgress()) {
-						if(args[0].equalsIgnoreCase("yes"))
-							StaffMain.getInstance().getVoteBan().addParticipant(player, true);
-						else
-							StaffMain.getInstance().getVoteBan().addParticipant(player, false);
-						
-						player.sendMessage("Merci d'avoir voté !");
-						return true;
-					}
-					else
-						player.sendMessage("aucun vote est en cours !");
-				}
-				else
-					player.sendMessage("vous avez deja voté !");
-			}
+		if(!(sender instanceof Player)) {
+			StaffMain.sendMessage(sender, "Tu dois etre un joueur");
+			return false;
 		}
 		
+		Player player = (Player) sender;
+		
+		if(args.length < 1) {
+			StaffMain.sendMessage(sender, "Argument insuffisant");
+			StaffMain.sendMessage(sender, "/voteban <yes|no>");
+			return false;
+		}
+		
+		if(StaffMain.getVoteBan() == null || !StaffMain.getVoteBan().isInProgress()) {
+			StaffMain.sendMessage(player, "Aucun vote en cours !");
+			return false;
+		}
+		
+		if(StaffMain.getVoteBan().getParticipants().containsKey(player)) {
+			StaffMain.sendMessage(player, "Vous avez déjà voté(e) !");
+			return false;
+		}
+		
+		if(args[0].equalsIgnoreCase("yes")) {
+			StaffMain.getVoteBan().addParticipant(player, true);
+			StaffMain.sendMessage(player, "Merci d'avoir voté !");
+			return true;
+		}
+		
+		if(args[0].equalsIgnoreCase("no")) {
+			StaffMain.getVoteBan().addParticipant(player, false);
+			StaffMain.sendMessage(player, "Merci d'avoir voté !");
+			return true;
+		}
+
+		StaffMain.sendMessage(sender, "vote invalide");
+		StaffMain.sendMessage(sender, "/voteban <yes|no>");
 		return false;
 	}
 }

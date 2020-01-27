@@ -32,11 +32,17 @@ public class AutoMessageCommand implements CommandExecutor{
 				changeLoop(sender, args[0]);
 			else if(args[0].equalsIgnoreCase("help"))
 				showHelp(sender);
+			else if(args[0].equalsIgnoreCase("refresh")) {
+				StaffMain.getAutoMessage().refresh();
+				StaffMain.sendMessage(sender, "AutoMessage refresh");
+			}
 			
 			return true;
 		}
-		else
+		else {
 			StaffMain.sendMessage(sender, "Pas assez d'argument !");
+			StaffMain.sendMessage(sender, "/automessage help");
+		}
 		
 		return false;
 	}
@@ -45,6 +51,7 @@ public class AutoMessageCommand implements CommandExecutor{
 		sender.sendMessage("/automessage add §3<message>");
 		sender.sendMessage("/automessage remove §3<numero>");
 		sender.sendMessage("/automessage list");
+		sender.sendMessage("/automessage refresh");
 		sender.sendMessage("/automessage delay §3<number>");
 		sender.sendMessage("/automessage <true|false>");
 		sender.sendMessage("/automessage help");
@@ -52,9 +59,9 @@ public class AutoMessageCommand implements CommandExecutor{
 
 	private void changeLoop(CommandSender sender, String bool) {
 		if(bool.equalsIgnoreCase("true"))
-			StaffMain.getInstance().getAutoMessage().setLoop(true);
+			StaffMain.getAutoMessage().setLoop(true);
 		else if(bool.equalsIgnoreCase("false"))
-			StaffMain.getInstance().getAutoMessage().setLoop(false);
+			StaffMain.getAutoMessage().setLoop(false);
 		
 		StaffMain.sendMessage(sender, "Changement effectué !");
 	}
@@ -62,7 +69,7 @@ public class AutoMessageCommand implements CommandExecutor{
 	private void changeDelay(CommandSender sender, String number) {
 		if(isNumber(number)) {
 			int n = Integer.parseInt(number);
-			StaffMain.getInstance().getAutoMessage().setDelay(n);
+			StaffMain.getAutoMessage().setDelay(n);
 			StaffMain.sendMessage(sender, "Delay modifié à " + n + " seconde(s)");
 		}
 		else
@@ -71,8 +78,8 @@ public class AutoMessageCommand implements CommandExecutor{
 
 	private void showList(CommandSender sender) {
 		StaffMain.sendMessage(sender, "==============");
-		for(short i = 0; i < StaffMain.getInstance().getAutoMessage().getMessages().size(); i++) {
-			sender.sendMessage(i + ": " + StaffMain.getInstance().getAutoMessage().getMessages().get(i));
+		for(short i = 0; i < StaffMain.getAutoMessage().getMessages().size(); i++) {
+			sender.sendMessage(i + ": " + StaffMain.getAutoMessage().getMessages().get(i));
 		}
 		StaffMain.sendMessage(sender, "==============");
 	}
@@ -80,8 +87,8 @@ public class AutoMessageCommand implements CommandExecutor{
 	private void removeMessage(CommandSender sender, String number) {
 		if(isNumber(number)) {
 			int n = Integer.parseInt(number);
-			if(n < StaffMain.getInstance().getAutoMessage().getMessages().size()) {
-				StaffMain.getInstance().getAutoMessage().removeMessage(n);
+			if(n < StaffMain.getAutoMessage().getMessages().size()) {
+				StaffMain.getAutoMessage().removeMessage(n);
 				StaffMain.sendMessage(sender, "Message supprimé !");
 			}
 			else
@@ -104,7 +111,7 @@ public class AutoMessageCommand implements CommandExecutor{
 		String message = "";
 		for(byte i = 1; i < args.length; i++)
 			message += args[i] + " ";
-		StaffMain.getInstance().getAutoMessage().addMessage(message);
+		StaffMain.getAutoMessage().addMessage(message);
 		StaffMain.sendMessage(sender, "Message enregistré !");
 	}
 }
