@@ -87,9 +87,7 @@ public class AutoMessage implements Serializable {
 	}
 	
 	private void sendBroadcastMessage(String str) {
-		StaffMain.getInstance().getServer().broadcastMessage(ChatColor.AQUA + "===MESSAGE AUTO===");
-		StaffMain.getInstance().getServer().broadcastMessage(ChatColor.AQUA + str);
-		StaffMain.getInstance().getServer().broadcastMessage(ChatColor.AQUA + "==================");
+		StaffMain.getInstance().getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + str);
 	}
 	
 	public static void save(AutoMessage autoMessage, File folder) throws IOException {

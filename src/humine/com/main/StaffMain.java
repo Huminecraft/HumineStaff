@@ -159,6 +159,7 @@ public class StaffMain extends JavaPlugin{
 		this.getCommand("tpsmonitor").setExecutor(new TPSCommand());
 		this.getCommand("upvote").setExecutor(new UpvoteCommand());
 		this.getCommand("where").setExecutor(new LocateCommand());
+		this.getCommand("sos").setExecutor(new SOSCommand());
 	}
 	
 	

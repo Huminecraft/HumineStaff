@@ -10,7 +10,7 @@ import humine.com.main.VoteBan;
 
 public class OpenVoteBanCommand implements CommandExecutor{
 
-	private static final int MIN_PLAYER = 1;
+	private static final int MIN_PLAYER = 5;
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

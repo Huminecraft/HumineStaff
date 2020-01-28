@@ -13,9 +13,9 @@ commands:
   vanish:
     permission: huminestaff.admin.vanish
   voteban:
-    permission: huminestaff.admin.voteban
+    permission:
   openvoteban:
-    permission: huminestaff.admin.voteban
+    permission:
   automessage:
     permission: huminestaff.admin.automessage
   lien:
@@ -28,3 +28,5 @@ commands:
     permission: huminestaff.user.upvote
   where:
     permission: huminestaff.admin.locate
+  sos:
+    permission:
