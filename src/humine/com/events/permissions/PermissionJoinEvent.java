@@ -14,11 +14,11 @@ public class PermissionJoinEvent implements Listener
 	public void onJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		
-		if(StaffMain.getInstance().getPermissionGroupManager().containsPlayer(player)) {
-			StaffMain.getInstance().getPermissionGroupManager().calculatePermission(player);
+		if(StaffMain.getPermissionGroupManager().containsPlayer(player)) {
+			StaffMain.getPermissionGroupManager().calculatePermission(player);
 		}
-		else if(StaffMain.getInstance().getPermissionGroupManager().containsDefaultPermissionGroup() && !StaffMain.getInstance().getPermissionGroupManager().getDefaultPermissionGroup().containsPlayer(player))
-			StaffMain.getInstance().getPermissionGroupManager().addPlayerToDefault(player);
+		else if(StaffMain.getPermissionGroupManager().containsDefaultPermissionGroup() && !StaffMain.getPermissionGroupManager().getDefaultPermissionGroup().containsPlayer(player))
+			StaffMain.getPermissionGroupManager().addPlayerToDefault(player);
 		
 	}
 }

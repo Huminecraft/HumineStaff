@@ -1,5 +1,8 @@
 package humine.com.permissions;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
@@ -104,7 +107,7 @@ public class PermissionGroupManager {
 		{
 			if (!group.isDefault() && group.containsPlayer(player))
 			{
-				group.addPlayer(player);
+				group.refreshPermissionPlayer(player);
 			}
 		}
 	}
@@ -187,5 +190,26 @@ public class PermissionGroupManager {
 			}
 		}
 
+	}
+	
+	public static void save(PermissionGroupManager manager, File folder) throws IOException {
+		folder.mkdirs();
+		
+		for(PermissionGroup g : manager.groups) {
+			File file = new File(folder, g.getName() + ".yml");
+			PermissionGroup.save(g, file);
+		}
+	}
+	
+	public static PermissionGroupManager load(File folder) throws FileNotFoundException {
+		if(!folder.exists())
+			throw new FileNotFoundException("HumineStaff : PermissionGroupManager not found : " + folder.getName());
+		
+		PermissionGroupManager manager = new PermissionGroupManager();
+		for(File file : folder.listFiles()) {
+			PermissionGroup g = PermissionGroup.getSave(file);
+			manager.addPermissionGroup(g);
+		}
+		return manager;
 	}
 }

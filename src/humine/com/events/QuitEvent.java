@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import humine.com.main.Message;
 import humine.com.main.StaffMain;
 
-public class MessageQuitEvent implements Listener{
+public class QuitEvent implements Listener{
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {

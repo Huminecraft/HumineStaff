@@ -16,15 +16,19 @@ import humine.com.permissions.PermissionGroup;
 public class PermissionCommand implements CommandExecutor {
 
 	/*
-	 * /permission add permission <player> <permission> /permission add permission
-	 * <group> <permission> /permission add player <group> <player>
+	 * /permission add permission <player> <permission> 
+	 * /permission add permission <group> <permission> 
+	 * /permission add player <group> <player>
 	 * 
-	 * /permission remove permission <player> <permission> /permission remove
-	 * permission <group> <permission> /permission remove player <group> <player>
+	 * /permission remove permission <player> <permission> 
+	 * /permission remove permission <group> <permission> 
+	 * /permission remove player <group> <player>
 	 * 
-	 * /permission create group <group> [default] /permission delete group <group>
+	 * /permission create group <group> [default] 
+	 * /permission delete group <group>
 	 * 
-	 * /permission inherit <group> <group> /permission disinherit <group> <group>
+	 * /permission inherit <group> <group> 
+	 * /permission disinherit <group> <group>
 	 * 
 	 * /permission list [group] [player|permission|inherit|default]
 	 * 
@@ -141,7 +145,7 @@ public class PermissionCommand implements CommandExecutor {
 	private void list(CommandSender sender, String[] args) {
 		if (args.length >= 3) {
 			if (isGroup(args[1])) {
-				PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[1]);
+				PermissionGroup group = StaffMain.getPermissionGroupManager().getPermissionGroup(args[1]);
 				if (args[2].equalsIgnoreCase("player")) {
 					sender.sendMessage(group.getName() + ":");
 					group.showPlayer(sender);
@@ -165,14 +169,14 @@ public class PermissionCommand implements CommandExecutor {
 				StaffMain.sendMessage(sender, "Groupe introuvable");
 		} else if (args.length == 2) {
 			if (isGroup(args[1])) {
-				PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[1]);
+				PermissionGroup group = StaffMain.getPermissionGroupManager().getPermissionGroup(args[1]);
 				sender.sendMessage(group.getName() + ":");
 				group.showAll(sender);
 			} else
 				StaffMain.sendMessage(sender, "Groupe introuvable");
 		} else {
 			String message = "";
-			for (PermissionGroup group : StaffMain.getInstance().getPermissionGroupManager().getPermissionGroups())
+			for (PermissionGroup group : StaffMain.getPermissionGroupManager().getPermissionGroups())
 				message += ChatColor.GOLD + group.getName() + "§r, ";
 
 			if (!message.equals("") && message.length() >= 2)
@@ -186,13 +190,13 @@ public class PermissionCommand implements CommandExecutor {
 	private void disinherit(CommandSender sender, String[] args) {
 		if (isGroup(args[1])) {
 			if (isGroup(args[2])) {
-				PermissionGroup group1 = StaffMain.getInstance().getPermissionGroupManager()
+				PermissionGroup group1 = StaffMain.getPermissionGroupManager()
 						.getPermissionGroup(args[1]);
-				PermissionGroup group2 = StaffMain.getInstance().getPermissionGroupManager()
+				PermissionGroup group2 = StaffMain.getPermissionGroupManager()
 						.getPermissionGroup(args[2]);
 				if (group1.containsInherit(group2)) {
 					group1.removeInherit(group2);
-					StaffMain.getInstance().getPermissionGroupManager().refreshRemoveInheritGroupPermission(group1, group2);
+					StaffMain.getPermissionGroupManager().refreshRemoveInheritGroupPermission(group1, group2);
 					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " n'hérite plus de " + args[2] + " !");
 				}
 				else
@@ -207,13 +211,13 @@ public class PermissionCommand implements CommandExecutor {
 	private void inherit(CommandSender sender, String[] args) {
 		if (isGroup(args[1])) {
 			if (isGroup(args[2])) {
-				PermissionGroup group1 = StaffMain.getInstance().getPermissionGroupManager()
+				PermissionGroup group1 = StaffMain.getPermissionGroupManager()
 						.getPermissionGroup(args[1]);
-				PermissionGroup group2 = StaffMain.getInstance().getPermissionGroupManager()
+				PermissionGroup group2 = StaffMain.getPermissionGroupManager()
 						.getPermissionGroup(args[2]);
 				if (!group1.containsInherit(group2)) {
 					group1.addInherit(group2);
-					StaffMain.getInstance().getPermissionGroupManager().refreshAddInheritGroupPermission(group1);
+					StaffMain.getPermissionGroupManager().refreshAddInheritGroupPermission(group1);
 					StaffMain.sendMessage(sender, "Maintenant " + args[1] + " hérite de " + args[2] + " !");
 				}
 				else
@@ -228,19 +232,19 @@ public class PermissionCommand implements CommandExecutor {
 
 	private void deleteGroup(CommandSender sender, String[] args) {
 		if (isGroup(args[2])) {
-			PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
-			StaffMain.getInstance().getPermissionGroupManager().removePermissionGroup(group);
-			StaffMain.getInstance().getPermissionGroupManager().refreshRemoveInheritGroupPermission(group, group);
+			PermissionGroup group = StaffMain.getPermissionGroupManager().getPermissionGroup(args[2]);
+			StaffMain.getPermissionGroupManager().removePermissionGroup(group);
+			StaffMain.getPermissionGroupManager().refreshRemoveInheritGroupPermission(group, group);
 			for(String player : group.getPlayers()) {
 				Player p = Bukkit.getPlayer(player);
 				if(p != null)
-					StaffMain.getInstance().getPermissionGroupManager().refreshPrefixNamePlayer(p);
+					StaffMain.getPermissionGroupManager().refreshPrefixNamePlayer(p);
 			}
 			
 			if(group.isDefault()) {
-				if(!StaffMain.getInstance().getPermissionGroupManager().isEmpty()) {
-					PermissionGroup defaultGroup = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroups().get(0);
-					StaffMain.getInstance().getPermissionGroupManager().setDefaultPermissionGroup(defaultGroup);
+				if(!StaffMain.getPermissionGroupManager().isEmpty()) {
+					PermissionGroup defaultGroup = StaffMain.getPermissionGroupManager().getPermissionGroups().get(0);
+					StaffMain.getPermissionGroupManager().setDefaultPermissionGroup(defaultGroup);
 					StaffMain.sendMessage(sender, defaultGroup.getName() + " est nommé comme groupe par défaut");
 				}
 			}
@@ -256,11 +260,11 @@ public class PermissionCommand implements CommandExecutor {
 
 	private void createGroup(CommandSender sender, String[] args) {
 		if (!isGroup(args[2])) {
-			PermissionGroup group = new PermissionGroup(StaffMain.getInstance(), args[2]);
-			StaffMain.getInstance().getPermissionGroupManager().addPermissionGroup(group);
+			PermissionGroup group = new PermissionGroup(args[2]);
+			StaffMain.getPermissionGroupManager().addPermissionGroup(group);
 
 			if (args.length >= 4 && args[3].equalsIgnoreCase("true")) {
-				StaffMain.getInstance().getPermissionGroupManager().setDefaultPermissionGroup(group);
+				StaffMain.getPermissionGroupManager().setDefaultPermissionGroup(group);
 			}
 
 			StaffMain.sendMessage(sender, "Groupe " + args[2] + " créé !");
@@ -272,7 +276,7 @@ public class PermissionCommand implements CommandExecutor {
 		if (isGroup(args[2])) {
 			if (isPlayer(args[3])) {
 				Player player = Bukkit.getPlayer(args[3]);
-				PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
+				PermissionGroup group = StaffMain.getPermissionGroupManager().getPermissionGroup(args[2]);
 				if (group.containsPlayer(player)) {
 					group.removePlayer(player);
 					StaffMain.sendMessage(sender, args[3] + " supprimé du groupe " + ChatColor.GREEN + args[2]);
@@ -291,10 +295,10 @@ public class PermissionCommand implements CommandExecutor {
 			attach.setPermission(args[3], false);
 			StaffMain.sendMessage(sender, "Permission supprimé au joueur " + args[2] + ": " + ChatColor.GOLD + args[3]);
 		} else if (isGroup(args[2])) {
-			PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
+			PermissionGroup group = StaffMain.getPermissionGroupManager().getPermissionGroup(args[2]);
 			if (group.containsPermission(args[3])) {
 				group.removePermission(args[3]);
-				StaffMain.getInstance().getPermissionGroupManager().removeInheritPermission(group, args[3]);
+				StaffMain.getPermissionGroupManager().removeInheritPermission(group, args[3]);
 				StaffMain.sendMessage(sender,
 						"Permission supprimé au groupe " + args[2] + ": " + ChatColor.GOLD + args[3]);
 			} else
@@ -309,7 +313,7 @@ public class PermissionCommand implements CommandExecutor {
 		if (isGroup(args[2])) {
 			if (isPlayer(args[3])) {
 				Player player = Bukkit.getPlayer(args[3]);
-				PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
+				PermissionGroup group = StaffMain.getPermissionGroupManager().getPermissionGroup(args[2]);
 				if (!group.containsPlayer(player)) {
 					group.addPlayer(player);
 					StaffMain.sendMessage(sender, args[3] + " ajouté dans le groupe " + ChatColor.GREEN + args[2]);
@@ -328,10 +332,10 @@ public class PermissionCommand implements CommandExecutor {
 			attach.setPermission(args[3], true);
 			StaffMain.sendMessage(sender, "Permission ajoutée au joueur " + args[2] + ": " + ChatColor.GOLD + args[3]);
 		} else if (isGroup(args[2])) {
-			PermissionGroup group = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(args[2]);
+			PermissionGroup group = StaffMain.getPermissionGroupManager().getPermissionGroup(args[2]);
 			if (!group.containsPermission(args[3])) {
 				group.addPermission(args[3]);
-				StaffMain.getInstance().getPermissionGroupManager().addInheritPermission(group, args[3]);
+				StaffMain.getPermissionGroupManager().addInheritPermission(group, args[3]);
 				StaffMain.sendMessage(sender,
 						"Permission ajoutée au groupe " + args[2] + ": " + ChatColor.GOLD + args[3]);
 			} else
@@ -342,7 +346,7 @@ public class PermissionCommand implements CommandExecutor {
 	}
 
 	private boolean isGroup(String group) {
-		PermissionGroup g = StaffMain.getInstance().getPermissionGroupManager().getPermissionGroup(group);
+		PermissionGroup g = StaffMain.getPermissionGroupManager().getPermissionGroup(group);
         return g != null;
 	}
 

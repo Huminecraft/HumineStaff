@@ -1,6 +1,7 @@
 package humine.com.main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,71 +9,65 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import humine.com.commands.*;
+import humine.com.commands.AnnonceCommand;
+import humine.com.commands.AutoMessageCommand;
+import humine.com.commands.LocateCommand;
+import humine.com.commands.OpenEnderChestCommand;
+import humine.com.commands.OpenInventoryCommand;
+import humine.com.commands.OpenLienCommand;
+import humine.com.commands.SOSCommand;
+import humine.com.commands.TPSCommand;
+import humine.com.commands.UpvoteCommand;
+import humine.com.commands.VanishCommand;
 import humine.com.commands.permissions.PermissionCommand;
 import humine.com.commands.voteban.OpenVoteBanCommand;
 import humine.com.commands.voteban.VoteBanCommand;
-import humine.com.events.*;
+import humine.com.events.BreakDiamondBlockEvent;
+import humine.com.events.FilterBlockInEnderChestEvent;
+import humine.com.events.JoinEvent;
+import humine.com.events.PlayerSleepEvent;
+import humine.com.events.PrefixChatEvent;
+import humine.com.events.QuitEvent;
+import humine.com.events.SaveEnderChestEvent;
+import humine.com.events.SavePlayerInventoryEvent;
 import humine.com.events.permissions.PermissionJoinEvent;
 import humine.com.permissions.PermissionGroup;
 import humine.com.permissions.PermissionGroupManager;
+import humine.fr.utils.TabList;
+import humine.fr.utils.UserManager;
 
 public class StaffMain extends JavaPlugin{
 
 	private static StaffMain instance;
 	private static VoteBan voteBan;
 	private static AutoMessage autoMessage;
+	private static TabList tabList;
+	private static PermissionGroupManager permissionGroupManager;
+	private static UserManager userManager;
 	
 	private ArrayList<Player> vanished;
-	
-	private PermissionGroupManager permissionGroupManager;
 	private List<String> PlayerInBed;
 	
 	private File voteBanFolder;
+	private File permissionGroupFolder;
+	private File prefixFile;
+	private File userManagerFolder;
 
 	@Override
 	public void onEnable() {
-		instance = this;
 		
-		this.voteBanFolder = new File(getDataFolder(), "VoteBanLogs");
-		this.voteBanFolder.mkdirs();
+		this.saveDefaultConfig();
+		initializeFiles();
+		initializeVariables();
 		
-		this.vanished = new ArrayList<Player>();
-		try {
-			autoMessage = AutoMessage.getOnFile(getDataFolder());
-		} catch (ClassNotFoundException | IOException e1) {
-			e1.printStackTrace();
-		}
-		
-		if(autoMessage == null)
-			autoMessage = new AutoMessage();
-		
-		autoMessage.startLoop();
-		voteBan = null;
-		this.permissionGroupManager = new PermissionGroupManager();
-		this.PlayerInBed = new ArrayList<String>();
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			if(player.isSleeping())
 				this.PlayerInBed.add(player.getName());
 		}
-		
-		this.saveDefaultConfig();
-		FileManager.makeDeFaultConfiguration(this.getDataFolder());
-		try {
-			Message.initiliaze(this.getDataFolder());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			autoMessage = AutoMessage.getOnFile(this.getDataFolder());
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
+		autoMessage.startLoop();
 		
 		initiliazePermission();
 		initiliazeEvents();
@@ -80,17 +75,65 @@ public class StaffMain extends JavaPlugin{
 		TPS.startTPSManager();
 	}
 	
+	private void initializeVariables() {
+		instance = this;
+		
+		try {
+			String header = "§d>>§5§lHumine§fCraft§r§d§r<<\n§5=§0=§5=§0=§5=§0=§5=§0=§5=§0=§5=§0=§5=§0=§5=§0=§5=§0=";
+			String footer = "§5=§0=§5=§0=§5=§0=§5=§0= §5Connectés: §f"+getServer().getOnlinePlayers().size()+" §5=§0=§5=§0=§5=§0=§5=§0=";
+			tabList = new TabList(header, footer);
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e2) {
+			e2.printStackTrace();
+		}
+		this.vanished = new ArrayList<Player>();
+		try {
+			autoMessage = AutoMessage.getOnFile(getDataFolder());
+		} catch (ClassNotFoundException | IOException e1) { e1.printStackTrace(); }
+		if(autoMessage == null) autoMessage = new AutoMessage();
+		
+		voteBan = null;
+		try {
+			permissionGroupManager = PermissionGroupManager.load(this.permissionGroupFolder);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		if(permissionGroupManager == null) permissionGroupManager = new PermissionGroupManager();
+
+		this.PlayerInBed = new ArrayList<String>();
+		try {
+			userManager = UserManager.load(this.userManagerFolder);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		if(userManager == null) userManager = new UserManager();
+	}
+
+	private void initializeFiles() {
+		FileManager.makeDeFaultConfiguration(this.getDataFolder());
+		this.voteBanFolder = new File(getDataFolder(), "VoteBanLogs");
+		this.voteBanFolder.mkdirs();
+		this.permissionGroupFolder = new File(this.getDataFolder(), "Group");
+		this.permissionGroupFolder.mkdirs();
+		this.prefixFile = new File(this.getDataFolder(), "prefix.yml");
+		this.userManagerFolder = new File(getDataFolder(), "Users");
+		this.userManagerFolder.mkdirs();
+		
+		try {
+			Message.initiliaze(this.getDataFolder());
+			this.prefixFile.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public void onDisable() {
 		try {
 			AutoMessage.save(autoMessage, this.getDataFolder());
+			UserManager.save(userManager, this.userManagerFolder);
 			FileManager.saveTPSConfig(TPS.enabled);
 			FileManager.saveUpvoteConfig(UpvoteCommand.delay, UpvoteCommand.reward);
-			for(PermissionGroup group : this.permissionGroupManager.getPermissionGroups()) {
-				File file = new File(this.getDataFolder(), "Group/"+group.getName()+".yml");
-				group.save(file);
-				
-			}
+			PermissionGroupManager.save(permissionGroupManager, this.permissionGroupFolder);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -99,51 +142,54 @@ public class StaffMain extends JavaPlugin{
 	
 	private void initiliazePermission()
 	{
-		File folder = new File(this.getDataFolder(), "Group");
-		File prefixFile = new File(this.getDataFolder(), "prefix.yml");
-		FileConfiguration config = YamlConfiguration.loadConfiguration(prefixFile);
+//		FileConfiguration config = YamlConfiguration.loadConfiguration(prefixFile);
+//		
+//		String name = "";
+//		for(File file : permissionGroupFolder.listFiles()) {
+//			name = file.getName();
+//			name = name.substring(0, name.length() - 4);
+//			PermissionGroup group = null;
+//			try {
+//				group = PermissionGroup.getSave(file);
+//			} catch (FileNotFoundException e) {
+//				e.printStackTrace();
+//			}
+//			if(group == null) group = new PermissionGroup(this, "");
+//			
+//			if(config.contains(group.getName()))
+//				group.setPrefix(config.getString(group.getName()));
+//			
+//			permissionGroupManager.addPermissionGroup(group);
+//		}
 		
-		String name = "";
-		for(File file : folder.listFiles()) {
-			name = file.getName();
-			name = name.substring(0, name.length() - 4);
-			PermissionGroup group = new PermissionGroup(this, name);
-			group.getSave(file);
-			
-			if(config.contains(group.getName()))
-				group.setPrefix(config.getString(group.getName()));
-			
-			this.permissionGroupManager.addPermissionGroup(group);
-		}
-		
-		if(!this.permissionGroupManager.containsDefaultPermissionGroup()) {
-			PermissionGroup group = new PermissionGroup(this, "user");
-			group.setDefault(true);
+		if(!permissionGroupManager.containsDefaultPermissionGroup()) {
+			PermissionGroup group = new PermissionGroup("user", true);
 			for(Player player : Bukkit.getOnlinePlayers())
 				group.addPlayer(player);
 			
-			this.permissionGroupManager.addPermissionGroup(group);
+			permissionGroupManager.addPermissionGroup(group);
 			
 		}
 		
 		for(Player player : Bukkit.getOnlinePlayers()) {
-			if(StaffMain.getInstance().getPermissionGroupManager().containsPlayer(player)) {
-				StaffMain.getInstance().getPermissionGroupManager().calculatePermission(player);
+			if(StaffMain.getPermissionGroupManager().containsPlayer(player)) {
+				StaffMain.getPermissionGroupManager().calculatePermission(player);
 			}
-			else if(StaffMain.getInstance().getPermissionGroupManager().containsDefaultPermissionGroup() && !StaffMain.getInstance().getPermissionGroupManager().getDefaultPermissionGroup().containsPlayer(player))
-				StaffMain.getInstance().getPermissionGroupManager().addPlayerToDefault(player);
+			else if(StaffMain.getPermissionGroupManager().containsDefaultPermissionGroup() && !StaffMain.getPermissionGroupManager().getDefaultPermissionGroup().containsPlayer(player))
+				StaffMain.getPermissionGroupManager().addPlayerToDefault(player);
 		}
 	}
 	
 	private void initiliazeEvents() {
 		this.getServer().getPluginManager().registerEvents(new SaveEnderChestEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new SavePlayerInventoryEvent(), this);
-		this.getServer().getPluginManager().registerEvents(new MessageJoinEvent(), this);
-		this.getServer().getPluginManager().registerEvents(new MessageQuitEvent(), this);
+		this.getServer().getPluginManager().registerEvents(new JoinEvent(), this);
+		this.getServer().getPluginManager().registerEvents(new QuitEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new BreakDiamondBlockEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new FilterBlockInEnderChestEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new PermissionJoinEvent(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerSleepEvent(), this);
+		this.getServer().getPluginManager().registerEvents(new PrefixChatEvent(), this);
 	}
 	
 	private void initializeCommands() {
@@ -191,14 +237,14 @@ public class StaffMain extends JavaPlugin{
 		voteBan = vb;
 	}
 
-	public PermissionGroupManager getPermissionGroupManager()
+	public static PermissionGroupManager getPermissionGroupManager()
 	{
 		return permissionGroupManager;
 	}
 
-	public void setPermissionGroupManager(PermissionGroupManager permissionGroupManager)
+	public void setPermissionGroupManager(PermissionGroupManager pgm)
 	{
-		this.permissionGroupManager = permissionGroupManager;
+		permissionGroupManager = pgm;
 	}
 
 	public List<String> getPlayerInBed() {
@@ -212,5 +258,17 @@ public class StaffMain extends JavaPlugin{
 	public File getVoteBanFolder() {
 		return voteBanFolder;
 	}
-
+	
+	public static TabList getTabList() {
+		return tabList;
+	}
+	
+	public static UserManager getUserManager() {
+		return userManager;
+	}
+	
+	public File getUserManagerFolder() {
+		return userManagerFolder;
+	}
+	
 }
