@@ -1,0 +1,32 @@
+name: HumineStaff
+main: com.huminecraft.huminestaff.main.StaffMain
+author: [MizakiGaming, SDAChess]
+version: 1.1.2
+api-version: 1.15
+commands:
+  invsee:
+    permission: huminestaff.admin.invsee
+  endsee:
+    permission: huminestaff.admin.endsee
+  annonce:
+    permission: huminestaff.admin.annonce
+  vanish:
+    permission: huminestaff.admin.vanish
+  voteban:
+    permission:
+  openvoteban:
+    permission:
+  automessage:
+    permission: huminestaff.admin.automessage
+  lien:
+    permission: huminestaff.user.lien
+  permission:
+    permission: huminestaff.admin.permission
+  tpsmonitor:
+    permission: huminestaff.admin.tpsmonitor
+  upvote:
+    permission: huminestaff.user.upvote
+  where:
+    permission: huminestaff.admin.locate
+  sos:
+    permission:
