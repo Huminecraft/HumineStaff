@@ -55,6 +55,10 @@
 
     <repositories>
         <repository>
+            <id>local-maven-repo</id>
+            <url>file:///home/sda/.m2/repository</url>
+        </repository>
+        <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -65,10 +69,11 @@
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>com.aypi</groupId>
             <artifactId>AYPI</artifactId>
-            <version>1.4.7</version>
+            <version>1.4.8</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

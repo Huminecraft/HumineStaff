@@ -31,6 +31,10 @@ public abstract class FileManager
         if (!file.exists())
             file.mkdirs();
 
+        file = new File(folder, "VoteBanLogs");
+        if (!file.exists())
+            file.mkdirs();
+
         file = new File(folder, "prefix.yml");
         if (!file.exists())
         {

@@ -11,8 +11,10 @@ import com.huminecraft.huminestaff.utils.TabList;
 import com.huminecraft.huminestaff.utils.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -21,7 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StaffMain extends JavaPlugin {
+public class StaffMain extends JavaPlugin implements Listener, CommandExecutor {
 
     private static StaffMain instance;
     private static VoteBan voteBan;
@@ -86,9 +88,7 @@ public class StaffMain extends JavaPlugin {
     private void initializeFiles() {
         FileManager.makeDeFaultConfiguration(this.getDataFolder());
         this.voteBanFolder = new File(getDataFolder(), "VoteBanLogs");
-        this.voteBanFolder.mkdirs();
         this.permissionGroupFolder = new File(this.getDataFolder(), "Group");
-        this.permissionGroupFolder.mkdirs();
         this.prefixFile = new File(this.getDataFolder(), "prefix.yml");
         this.userManagerFolder = new File(getDataFolder(), "Users");
         this.userManagerFolder.mkdirs();

@@ -31,7 +31,20 @@ public class PermissionGroup {
 	private List<String> groupInherit;
 
 	public PermissionGroup(String name) {
-		this(name, false);
+		this.name = name;
+		this.prefix = "";
+		this.defaut = false;
+		this.permissionsPlayer = new HashMap<String, PermissionAttachment>();
+		this.permissionsList = new ArrayList<String>();
+		this.groupInherit = new ArrayList<String>();
+
+		File file = new File(StaffMain.getInstance().getDataFolder(), "prefix.yml");
+		FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+		try {
+			config.save(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public PermissionGroup(String name, boolean defaut) {
@@ -44,7 +57,6 @@ public class PermissionGroup {
 
 		File file = new File(StaffMain.getInstance().getDataFolder(), "prefix.yml");
 		FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-		config.set(this.name, this.prefix);
 		try {
 			config.save(file);
 		} catch (IOException e) {
@@ -188,7 +200,7 @@ public class PermissionGroup {
 			throw new FileNotFoundException("HumineStaff : PermissionGroup not found : " + file.getName());
 		
 		FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-		PermissionGroup g = new PermissionGroup("");
+		PermissionGroup g = new PermissionGroup("", false);
 		
 		g.name = config.getString("Name");
 		g.defaut = config.getBoolean("Default");
